@@ -29,6 +29,12 @@ test("assertOfficialPage refuse une page étrangère ou dégradée", () => {
   );
 });
 
+test("assertOfficialPage reconnaît la page officielle Billets & Packs", () => {
+  assert.doesNotThrow(() =>
+    assertOfficialPage("<title>Billets & Packs | FC Lorient</title>"),
+  );
+});
+
 test("labelFromSaleUrl produit un libellé lisible à domicile", () => {
   assert.equal(
     labelFromSaleUrl("https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-fc-lorient-paris-fc-1"),

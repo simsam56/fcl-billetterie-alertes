@@ -1,5 +1,8 @@
 const DEFAULT_BASE_URL = "https://billetterie.fclorient.bzh";
-const OFFICIAL_SIGNATURE = "BILLETTERIE OFFICIELLE FC LORIENT";
+const OFFICIAL_SIGNATURES = [
+  "BILLETTERIE OFFICIELLE FC LORIENT",
+  "<title>Billets & Packs | FC Lorient</title>",
+];
 const MATCH_PATH = /\/fr\/catalogue\/match-foot-masculin-[^"'?#<\s]+/giu;
 const ACRONYMS = new Set([
   "ac",
@@ -14,7 +17,7 @@ const ACRONYMS = new Set([
 ]);
 
 export function assertOfficialPage(html) {
-  if (!html.includes(OFFICIAL_SIGNATURE)) {
+  if (!OFFICIAL_SIGNATURES.some((signature) => html.includes(signature))) {
     throw new Error("Page billetterie invalide : signature officielle absente");
   }
 }
