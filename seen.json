@@ -1,6 +1,10 @@
 {
   "version": 1,
-  "initializedAt": null,
-  "updatedAt": null,
-  "seen": []
+  "initializedAt": "2026-08-29T20:07:55.322Z",
+  "updatedAt": "2026-08-29T20:07:55.322Z",
+  "seen": [
+    "https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-fc-lorient-estac-troyes",
+    "https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-fc-lorient-toulouse-fc-1",
+    "https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-rc-lens-fc-lorient"
+  ]
 }
