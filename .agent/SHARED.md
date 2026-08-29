@@ -1,4 +1,5 @@
 ## En cours
+- [Codex] 2026-08-29 21:57 — je touche : mise en place du worktree d'implémentation
 
 ## Decisions
 - 2026-08-29 — GitHub Actions public retenu pour éviter un nouvel hébergeur ; le canal ntfy restera un secret GitHub.
