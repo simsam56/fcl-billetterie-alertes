@@ -88,4 +88,13 @@ test("un état incomplet ou contenant une URL étrangère est refusé", () => {
       }),
     /État de surveillance invalide/,
   );
+  assert.throws(
+    () =>
+      validateState({
+        ...emptyState(),
+        updatedAt: now(),
+        seen: [first],
+      }),
+    /État de surveillance invalide/,
+  );
 });

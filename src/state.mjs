@@ -20,7 +20,7 @@ function validTimestamp(value) {
 }
 
 export function validateState(state) {
-  const valid =
+  const validShape =
     state !== null &&
     typeof state === "object" &&
     state.version === 1 &&
@@ -30,7 +30,13 @@ export function validateState(state) {
     state.seen.every(
       (url) => typeof url === "string" && OFFICIAL_SALE_URL.test(url),
     );
-  if (!valid) {
+  const validLifecycle =
+    validShape &&
+    ((state.initializedAt === null &&
+      state.updatedAt === null &&
+      state.seen.length === 0) ||
+      (state.initializedAt !== null && state.updatedAt !== null));
+  if (!validLifecycle) {
     throw new Error("État de surveillance invalide");
   }
   return state;

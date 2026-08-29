@@ -17,6 +17,9 @@ test("le workflow est planifié, sérialisé et limite ses permissions", async (
   assert.match(yaml, /ref: state/);
   assert.match(yaml, /timeout-minutes: 5/);
   assert.match(yaml, /persist-credentials: false/);
+  assert.ok(
+    yaml.indexOf("- name: Run tests") < yaml.indexOf("- name: Checkout state"),
+  );
   assert.doesNotMatch(yaml, /fcl-billets-[a-f0-9]{20,}/);
 });
 
