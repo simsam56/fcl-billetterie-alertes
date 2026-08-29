@@ -43,6 +43,7 @@ jobs:
         run: npm test
 
       - name: Checkout state
+        id: state-checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: state
@@ -59,7 +60,7 @@ jobs:
           fi
 
       - name: Persist state
-        if: always() && env.MODE == 'check'
+        if: always() && env.MODE == 'check' && steps.state-checkout.outcome == 'success'
         run: |
           git -C .monitor-state config user.name "github-actions[bot]"
           git -C .monitor-state config user.email "41898282+github-actions[bot]@users.noreply.github.com"

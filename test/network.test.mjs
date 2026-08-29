@@ -87,9 +87,18 @@ test("sendNtfy interrompt un appel réseau trop long", async () => {
       timeoutMs: 5,
       fetchImpl: async (_url, { signal }) =>
         new Promise((_resolve, reject) => {
-          signal.addEventListener("abort", () => reject(signal.reason), {
-            once: true,
-          });
+          const guard = setTimeout(
+            () => reject(new Error("Le signal de timeout n'a pas été émis")),
+            100,
+          );
+          signal.addEventListener(
+            "abort",
+            () => {
+              clearTimeout(guard);
+              reject(signal.reason);
+            },
+            { once: true },
+          );
         }),
     }),
     /timed out|timeout/i,

@@ -13,6 +13,7 @@ test("le workflow est planifié, sérialisé et limite ses permissions", async (
   assert.match(yaml, /contents: write/);
   assert.match(yaml, /cancel-in-progress: false/);
   assert.match(yaml, /always\(\).*env\.MODE == 'check'/);
+  assert.match(yaml, /steps\.state-checkout\.outcome == 'success'/);
   assert.match(yaml, /NTFY_TOPIC: \$\{\{ secrets\.NTFY_TOPIC \}\}/);
   assert.match(yaml, /ref: state/);
   assert.match(yaml, /timeout-minutes: 5/);
