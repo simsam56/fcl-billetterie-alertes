@@ -7,12 +7,42 @@ export function emptyState() {
   };
 }
 
+const OFFICIAL_SALE_URL =
+  /^https:\/\/billetterie\.fclorient\.bzh\/fr\/catalogue\/match-foot-masculin-[a-z0-9-]+$/;
+
+function validTimestamp(value) {
+  return (
+    value === null ||
+    (typeof value === "string" &&
+      Number.isFinite(Date.parse(value)) &&
+      new Date(value).toISOString() === value)
+  );
+}
+
+export function validateState(state) {
+  const valid =
+    state !== null &&
+    typeof state === "object" &&
+    state.version === 1 &&
+    validTimestamp(state.initializedAt) &&
+    validTimestamp(state.updatedAt) &&
+    Array.isArray(state.seen) &&
+    state.seen.every(
+      (url) => typeof url === "string" && OFFICIAL_SALE_URL.test(url),
+    );
+  if (!valid) {
+    throw new Error("État de surveillance invalide");
+  }
+  return state;
+}
+
 export async function processDetectedSales({
   urls,
   state,
   notify,
   now = () => new Date().toISOString(),
 }) {
+  validateState(state);
   const normalized = [...new Set(urls)].sort();
   if (!state.initializedAt) {
     const timestamp = now();

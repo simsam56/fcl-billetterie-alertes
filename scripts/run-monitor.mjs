@@ -9,7 +9,11 @@ import {
   sendNtfy,
   TICKET_LIST_URL,
 } from "../src/network.mjs";
-import { emptyState, processDetectedSales } from "../src/state.mjs";
+import {
+  emptyState,
+  processDetectedSales,
+  validateState,
+} from "../src/state.mjs";
 
 const [mode = "check", ...args] = process.argv.slice(2);
 const stateFlag = args.indexOf("--state");
@@ -50,6 +54,7 @@ if (mode === "inspect") {
       throw error;
     }
   }
+  validateState(state);
 
   const urls = await loadUrls();
   const result = await processDetectedSales({

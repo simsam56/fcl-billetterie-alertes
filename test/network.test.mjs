@@ -76,3 +76,22 @@ test("sendNtfy refuse un sujet absent avant tout appel réseau", async () => {
   );
   assert.equal(called, false);
 });
+
+test("sendNtfy interrompt un appel réseau trop long", async () => {
+  await assert.rejects(
+    sendNtfy({
+      topic: "topic-valide",
+      title: "Test",
+      message: "Test",
+      clickUrl: "https://billetterie.fclorient.bzh/fr/",
+      timeoutMs: 5,
+      fetchImpl: async (_url, { signal }) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener("abort", () => reject(signal.reason), {
+            once: true,
+          });
+        }),
+    }),
+    /timed out|timeout/i,
+  );
+});

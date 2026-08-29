@@ -1,7 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { emptyState, processDetectedSales } from "../src/state.mjs";
+import {
+  emptyState,
+  processDetectedSales,
+  validateState,
+} from "../src/state.mjs";
 
 const first = "https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-fc-lorient-paris-fc";
 const second = "https://billetterie.fclorient.bzh/fr/catalogue/match-foot-masculin-rc-lens-fc-lorient";
@@ -72,4 +76,16 @@ test("un échec ntfy laisse la vente à retenter", async () => {
   assert.equal(result.failures.length, 1);
   assert.equal(result.state.seen.includes(second), false);
   assert.strictEqual(result.state, baseline);
+});
+
+test("un état incomplet ou contenant une URL étrangère est refusé", () => {
+  assert.throws(() => validateState({}), /État de surveillance invalide/);
+  assert.throws(
+    () =>
+      validateState({
+        ...emptyState(),
+        seen: ["https://example.com/faux-match"],
+      }),
+    /État de surveillance invalide/,
+  );
 });

@@ -26,6 +26,7 @@ export async function sendNtfy({
   title,
   message,
   clickUrl,
+  timeoutMs = 15_000,
 }) {
   if (!/^[-_A-Za-z0-9]{8,64}$/.test(topic ?? "")) {
     throw new Error("Sujet ntfy absent ou invalide");
@@ -39,6 +40,7 @@ export async function sendNtfy({
       Click: clickUrl,
     },
     body: message,
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!response.ok) {
     throw new Error(`Notification ntfy refusée (HTTP ${response.status})`);

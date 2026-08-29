@@ -1,0 +1,31 @@
+name: keep scheduled monitoring active
+
+on:
+  schedule:
+    - cron: '17 3 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fcl-ticket-heartbeat
+  cancel-in-progress: false
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Record repository activity
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > monitor-heartbeat.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add monitor-heartbeat.txt
+          git commit -m "chore: keep scheduled monitoring active"
+          git pull --rebase origin main
+          git push origin main
