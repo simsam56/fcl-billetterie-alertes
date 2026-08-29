@@ -1,0 +1,66 @@
+name: monitor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Mode à exécuter
+        required: true
+        default: check
+        type: choice
+        options:
+          - check
+          - inspect
+          - test-notification
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fcl-ticket-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    env:
+      MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'check' }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+    steps:
+      - name: Checkout application
+        uses: actions/checkout@v4
+
+      - name: Checkout state
+        uses: actions/checkout@v4
+        with:
+          ref: state
+          path: .monitor-state
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run monitor
+        run: |
+          if [ "$MODE" = "check" ]; then
+            node scripts/run-monitor.mjs check --state .monitor-state/seen.json
+          else
+            node scripts/run-monitor.mjs "$MODE"
+          fi
+
+      - name: Persist state
+        if: always() && env.MODE == 'check'
+        run: |
+          git -C .monitor-state config user.name "github-actions[bot]"
+          git -C .monitor-state config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C .monitor-state add seen.json
+          if ! git -C .monitor-state diff --cached --quiet; then
+            git -C .monitor-state commit -m "chore: update ticket monitor state"
+            git -C .monitor-state push origin state
+          fi
